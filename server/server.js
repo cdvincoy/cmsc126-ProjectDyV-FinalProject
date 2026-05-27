@@ -1,19 +1,20 @@
-import 'dotenv/config'
-import express from 'express'
-import { pool } from './database.js'
+import express from "express";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
-const app = express()
+dotenv.config();
 
-app.get('/api', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM users')
-    res.json({ users: result.rows })
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Something went wrong' })
-  }
+const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.get("/", (req, res) => {
+  res.send("Hello World!");
 })
 
-app.listen(5000, () => {
-  console.log('Server started on port 5000')
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`)
 })
