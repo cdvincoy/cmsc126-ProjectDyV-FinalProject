@@ -6,7 +6,7 @@ import facebookIcon from "../assets/facebook.svg";
 import messengerIcon from "../assets/messenger.svg";
 import githubIcon from "../assets/github.svg";
 import linkedinIcon from "../assets/linkedin.svg";
-import logoImg from "../assets/LIKHA.svg";
+import logoImg from "../assets/LIKHA.png";
 import heroImg from "../assets/hero.jpg";
 
 export default function AuthPage() {

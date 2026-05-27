@@ -19,7 +19,7 @@ function RegisterForm() {
         <div className="form-container">
             <h2>No account yet?</h2>
             <p className="subtitle">Build. Showcase. Connect. Register now!</p>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="register-form">
                 <input
                     type="email"
                     name="email"
