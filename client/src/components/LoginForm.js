@@ -17,23 +17,25 @@ function LoginForm() {
 
     return (
         <div className="form-container">
-            <h2>Welcome Back</h2>
+            <h2>Welcome Back!</h2>
+            <p className="subtitle">Please log in to continue.</p>
             <form onSubmit={handleSubmit}>
                 <input
                     type="email"
                     name="email"
-                    placeholder="Email"
+                    placeholder="email"
                     value={formData.email}
                     onChange={handleChange}
                 />
                 <input
                     type="password"
                     name="password"
-                    placeholder="Password"
+                    placeholder="password"
                     value={formData.password}
                     onChange={handleChange}
                 />
-                <button type="submit">Login</button>
+                <span className="forgot-password">Forgot password?</span>
+                <button type="submit">Log in</button>
             </form>
         </div>
     );

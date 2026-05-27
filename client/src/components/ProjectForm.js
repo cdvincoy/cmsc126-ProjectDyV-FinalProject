@@ -15,7 +15,7 @@ function ProjectForm() {
         title,
         description,
         link,
-        user_id: 7
+        user_id: 1
       };
 
       const response = await fetch("http://localhost:5000/projects", {
