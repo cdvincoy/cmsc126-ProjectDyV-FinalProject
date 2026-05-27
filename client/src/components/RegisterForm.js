@@ -1,18 +1,45 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
     const [formData, setFormData] = useState({
+        name: "",
         email: "",
         password: "",
     });
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Register submitted:", formData);
+
+        try {
+            const response = await fetch("http://localhost:5000/users", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+        
+
+        const data = await response.json();
+        console.log(data);
+        alert("Registered successfully!");
+        
+        setFormData({
+            name: "",
+            email: "",
+            password: "",
+        });
+        navigate("/");
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     return (
@@ -20,6 +47,13 @@ function RegisterForm() {
             <h2>No account yet?</h2>
             <p className="subtitle">Build. Showcase. Connect. Register now!</p>
             <form onSubmit={handleSubmit} className="register-form">
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                />
                 <input
                     type="email"
                     name="email"

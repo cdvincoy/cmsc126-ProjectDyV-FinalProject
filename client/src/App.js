@@ -10,7 +10,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<AuthPage />} />
-          <Route path="/authpage" element={<AuthPage />} />
+          {/* <Route path="/authpage" element={<AuthPage />} /> */}
           <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
       </BrowserRouter>          
