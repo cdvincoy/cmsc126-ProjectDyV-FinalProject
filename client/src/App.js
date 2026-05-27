@@ -1,32 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import { useState, useEffect } from 'react'
 
 function App() {
-
-  const [backendDate, setBackendData] = useState([{}])
+  const [backendData, setBackendData] = useState({})
 
   useEffect(() => {
-    fetch("/api").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data)
-      }
-    )
+    fetch('/api')
+      .then(res => res.json())
+      .then(data => setBackendData(data))
   }, [])
 
   return (
     <div>
-  
-      {(typeof backendDate.users === 'undefined') ? (
+      {typeof backendData.users === 'undefined' ? (
         <p>Loading...</p>
       ) : (
-        backendDate.users.map((user, i) => (
-          <p key={i}>{user}</p>
+        backendData.users.map((user, i) => (
+          <p key={user.id}>{user.name}</p>
         ))
       )}
-
     </div>
-  );
+  )
 }
 
 export default App
