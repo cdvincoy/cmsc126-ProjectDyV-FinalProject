@@ -113,8 +113,8 @@ function DashboardPage() {
               <h3>Education</h3>
 
               <div className="education_card">
-                <p><strong>College:</strong> Example University</p>
-                <p><strong>Year:</strong> 2022 - Present</p>
+                <p>University of the Philippines</p>
+                <p><i>2022 - present</i></p>
               </div>
 
             </div>

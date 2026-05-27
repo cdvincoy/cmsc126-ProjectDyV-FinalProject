@@ -23,23 +23,18 @@ html {
   padding: 0 40px;
   display: flex;
   flex-direction: column;
-  /* border-bottom: 1px solid #e0e0e0; */
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-/* TOP ROW — search centered */
+/* TOP ROW */
 .top-row {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #251D4B;
-}
-
-.logo {
-  display: none;
 }
 
 .search-bar {
@@ -58,7 +53,7 @@ html {
   background: #fff;
 }
 
-/* BOTTOM ROW — avatar+name left, nav right */
+/* BOTTOM ROW */
 .bottom-row {
   display: flex;
   justify-content: space-between;
@@ -74,7 +69,7 @@ html {
   color: #1a1a2e;
 }
 
-.user-info:hover { 
+.user-info:hover {
   opacity: 0.75;
 }
 
@@ -116,7 +111,7 @@ nav button {
   transition: color 0.2s;
 }
 
-nav button:hover { 
+nav button:hover {
   color: #ffffff;
 }
 
@@ -127,17 +122,14 @@ nav button:hover {
   flex-direction: column;
 }
 
-/* TOP — side-by-side layout */
 .basic_top {
   display: flex;
-  flex-direction: row;
   gap: 48px;
   padding: 52px 60px 40px 60px;
   align-items: flex-start;
   background: #251D4B;
 }
 
-/* LEFT — profile image */
 .basic_left {
   flex-shrink: 0;
   display: flex;
@@ -153,7 +145,6 @@ nav button:hover {
   display: block;
 }
 
-/* RIGHT — text content */
 .basic_right {
   flex: 1;
   color: white;
@@ -169,7 +160,6 @@ nav button:hover {
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: rgba(255,255,255,0.5);
-  margin-bottom: 10;
 }
 
 .designation {
@@ -189,7 +179,7 @@ nav button:hover {
   text-transform: uppercase;
 }
 
-.basic_right > p:not(.designation):not(.full_name):not(.h2) {
+.basic_right > p:not(.designation):not(.full_name) {
   font-size: 16px;
   color: rgba(255,255,255,0.8);
   line-height: 1.75;
@@ -197,12 +187,11 @@ nav button:hover {
   margin-top: 4px;
 }
 
-/* SOCIALS — icon boxes, no overlapping text */
+/* SOCIALS */
 .socials {
   margin-top: 10px;
   display: flex;
   gap: 10px;
-  align-items: center;
   flex-wrap: wrap;
 }
 
@@ -214,16 +203,9 @@ nav button:hover {
   padding: 7px 14px;
   border: 1.5px solid rgba(255,255,255,0.3);
   border-radius: 8px;
-  transition: border-color 0.2s, background 0.2s;
-  white-space: nowrap;
 }
 
-.socials a:hover {
-  border-color: rgba(255,255,255,0.8);
-  background: rgba(255,255,255,0.08);
-}
-
-/* TEXTAREA (edit mode) */
+/* TEXTAREA */
 textarea {
   width: 100%;
   min-height: 100px;
@@ -234,14 +216,9 @@ textarea {
   background: rgba(255,255,255,0.08);
   color: white;
   font-size: 14px;
-  resize: vertical;
 }
 
-textarea::placeholder {
-  color: rgba(255,255,255,0.35);
-}
-
-/* ─── EDUCATION STRIP ─────────────────────────────── */
+/* ─── EDUCATION ─────────────────────────────── */
 .basic_bottom {
   background: #251D4B;
   padding: 20px 60px;
@@ -264,14 +241,7 @@ textarea::placeholder {
   font-weight: 600;
 }
 
-.education_card p + p {
-  font-size: 13px;
-  color: rgba(255,255,255,0.55);
-  font-weight: 400;
-  margin-top: 3px;
-}
-
-/* ─── SKILLS / PROJECTS (existing plain text) ─────── */
+/* SKILLS / PROJECTS */
 .basic_info > h3 {
   font-size: 13px;
   font-weight: 700;
@@ -287,7 +257,7 @@ textarea::placeholder {
   padding: 0 60px 20px;
 }
 
-/* ─── OTHER PAGES (Portfolio, Jobs, About, Settings) ── */
+/* OTHER PAGES */
 main > section {
   padding: 48px 60px;
   min-height: 50vh;
