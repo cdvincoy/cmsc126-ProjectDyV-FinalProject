@@ -83,6 +83,8 @@ function DashboardPage() {
                   Undergraduate Student
                 </p>
 
+                <p className="full_name">Student Name</p>
+
                 {/* EDIT MODE TOGGLE */}
                 {isEditing ? (
                   <textarea

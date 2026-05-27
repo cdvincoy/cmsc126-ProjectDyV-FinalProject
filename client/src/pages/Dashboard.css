@@ -12,6 +12,10 @@ body {
   color: #1a1a2e;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 /* ─── HEADER ─────────────────────────────────────── */
 .dashboard-header {
   background: #251D4B;
@@ -19,7 +23,7 @@ body {
   padding: 0 40px;
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #e0e0e0;
+  /* border-bottom: 1px solid #e0e0e0; */
   position: sticky;
   top: 0;
   z-index: 100;
@@ -141,8 +145,8 @@ nav button:hover {
 }
 
 .profile_img {
-  width: 220px;
-  height: 220px;
+  width: 425px;
+  height: 425px;
   border-radius: 50%;
   object-fit: cover;
   border: 4px solid rgba(255, 255, 255, 0.2);
@@ -160,25 +164,33 @@ nav button:hover {
 }
 
 .basic_right h2 {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 2.5px;
   text-transform: uppercase;
   color: rgba(255,255,255,0.5);
-  margin-bottom: 0;
+  margin-bottom: 10;
 }
 
 .designation {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 500;
   color: rgba(255,255,255,0.65);
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-top: 0;
 }
 
-.basic_right > p {
-  font-size: 14px;
+.full_name {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.basic_right > p:not(.designation):not(.full_name):not(.h2) {
+  font-size: 16px;
   color: rgba(255,255,255,0.8);
   line-height: 1.75;
   max-width: 560px;
