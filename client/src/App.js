@@ -1,16 +1,17 @@
 import React from "react";
 import "./App.css";
-import ProjectForm from "./components/ProjectForm";
-import ProjectList from "./components/ProjectList";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthPage from "./pages/AuthPage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
-    <div>
-      <h1>Student Portfolio Hub</h1>
-
-      <ProjectForm />
-      <ProjectList />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    </BrowserRouter>          
   );
 }
 
