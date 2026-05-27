@@ -1,0 +1,150 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron");
+
+* {
+  font-family: "Inter", sans-serif;;
+}
+
+.dashboard-header {
+  background: #251D4B;
+  color: white;
+  padding: 15px 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* TOP ROW */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* BOTTOM ROW */
+.bottom-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* LOGO */
+.logo {
+  margin: 0;
+}
+
+/* SEARCH */
+.search-bar {
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+  width: 300px;
+  color: white;
+  opacity: 50%;
+}
+
+/* USER INFO */
+.user-info {
+  color: #426BC2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.user-info:hover {
+  opacity: 0.8;
+}
+
+nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+/* NAV */
+nav button {
+  font-weight: bold;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #426BC2;
+  cursor: pointer;
+}
+
+nav button:hover {
+  color: #CCA9E8;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+}
+
+/* About Me */
+.basic_info {
+  background: #251D4B;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* TOP */
+.basic_top {
+  display: flex;
+  gap: 20px;
+  background: #251D4B;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* LEFT IMAGE */
+.profile_img {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* RIGHT SIDE */
+.basic_right {
+  flex: 1;
+}
+
+.designation {
+  color: gray;
+  margin-top: -10px;
+}
+
+/* TEXTAREA */
+textarea {
+  width: 100%;
+  min-height: 100px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* SOCIALS */
+.socials {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.socials a {
+  text-decoration: none;
+  color: #426BC2;
+  font-size: 14px;
+}
+
+/* BOTTOM */
+.basic_bottom {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.education_card {
+  margin-top: 10px;
+}
