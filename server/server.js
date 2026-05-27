@@ -12,14 +12,14 @@ app.post("/users", async (req, res) => {
 
   try {
 
-    const { name, email, password, bio, birthday, address, created_at } = req.body;
+    const { name, email, password, bio, birthday, address } = req.body;
 
     const newUser = await pool.query(
       `INSERT INTO users
-      (name, email, password, bio, birthday, address, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      (name, email, password, bio, birthday, address)
+      VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *`,
-      [name, email, password, bio, birthday, address, created_at]
+      [name, email, password, bio, birthday, address]
     );
 
     res.json(newUser.rows[0]);
