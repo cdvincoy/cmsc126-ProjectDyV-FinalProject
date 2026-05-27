@@ -71,11 +71,17 @@ router.post('/login', async (req, res) => {
 
     res.cookie('token', token, cookieOptions);
 
-    res.json({ user: { id: userData.id, username: userData.username, email: userData.email }, token });
+    res.json({ 
+        user: { 
+            id: userData.id,
+            username: userData.username,
+            email: userData.email
+        },
+    });
 })
 
 // Me
-router.get('/me', async (req, res) => {
+router.get('/me', protect, async (req, res) => {
     res.json(req.user);
     // return info of the logged in user from protect middleware
 })
