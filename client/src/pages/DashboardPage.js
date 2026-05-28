@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
+import logoImg from "../assets/logo.png";
 
 function DashboardPage() {
   const [page, setPage] = useState("profile");
@@ -13,7 +14,9 @@ function DashboardPage() {
       <header className="dashboard-header">
 
         <div className="top-row">
-          <h1 className="logo">Logo Here</h1>
+          <div className="logo">
+            <img src={logoImg} alt="Logo" />
+          </div>
 
           <input
             type="text"

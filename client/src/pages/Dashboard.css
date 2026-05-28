@@ -31,8 +31,8 @@ html {
 /* TOP ROW */
 .top-row {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: space-between;
+  align-items: center; /* this vertically aligns both */
   padding: 12px 0;
   border-bottom: 1px solid #251D4B;
 }
@@ -51,6 +51,12 @@ html {
 .search-bar:focus {
   border-color: #426BC2;
   background: #fff;
+}
+
+.logo img {
+  height: 38px; /* same height as search bar */
+  width: auto;
+  object-fit: contain;
 }
 
 /* BOTTOM ROW */
@@ -239,6 +245,7 @@ textarea {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
+  color: #cadffd;
 }
 
 /* SKILLS / PROJECTS */

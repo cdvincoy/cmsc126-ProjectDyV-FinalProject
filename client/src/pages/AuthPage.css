@@ -166,14 +166,14 @@
 }
 
 .footer-logo img {
-    width: 80px;
+    width: 160px;
     height: auto;
-    margin-left: -116px; /* ← tweak this value until aligned */
+    margin-left: -40px;
 }
 
 .footer-copy {
     font-size: 12px;
-    color: #251d4b;
+    color: #426bc2;
     margin-top: 4px;
 }
 
