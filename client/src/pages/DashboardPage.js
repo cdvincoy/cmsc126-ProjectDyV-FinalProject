@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
-import logoImg from "../assets/logo.png";
+import iconImg from "../assets/logo.png";
+import logoImg from "../assets/LIKHA.png";
+import facebookIcon from "../assets/facebook.svg";
+import messengerIcon from "../assets/messenger.svg";
+import githubIcon from "../assets/github.svg";
+import linkedinIcon from "../assets/linkedin.svg";
+// import { IoMdSettings } from "react-icons/io";
 
 function DashboardPage() {
   const [page, setPage] = useState("profile");
@@ -15,7 +21,7 @@ function DashboardPage() {
 
         <div className="top-row">
           <div className="logo">
-            <img src={logoImg} alt="Logo" />
+            <img src={iconImg} alt="Icon" />
           </div>
 
           <input
@@ -156,6 +162,20 @@ function DashboardPage() {
           </section>
         )}
 
+        <footer className="auth-footer">
+            <div className="footer-left">
+                <div className="footer-logo">
+                    <img src={logoImg} alt="Likha" />
+                </div>
+                <div className="footer-copy">© 2026 Likha. All Rights Reserved</div>
+            </div>
+            <div className="footer-icons">
+                <img src={facebookIcon} alt="Facebook" />
+                <img src={messengerIcon} alt="Messenger" />
+                <img src={githubIcon} alt="GitHub" />
+                <img src={linkedinIcon} alt="LinkedIn" />
+            </div>
+          </footer>
       </main>
 
     </div>

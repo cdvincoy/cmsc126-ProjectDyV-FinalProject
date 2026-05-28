@@ -1,21 +1,36 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 function RegisterForm() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
+        confirmPassword: "",
     });
 
+
     const navigate = useNavigate();
+
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+
+        const { confirmPassword, ...payload } = formData;
+
 
         try {
             const response = await fetch("http://localhost:5000/users", {
@@ -23,24 +38,27 @@ function RegisterForm() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
-        
+       
+
 
         const data = await response.json();
         console.log(data);
         alert("Registered successfully!");
-        
+       
         setFormData({
             name: "",
             email: "",
             password: "",
+            confirmPassword: "",
         });
         navigate("/");
         } catch (err) {
             console.error(err);
         }
     };
+
 
     return (
         <div className="form-container">
@@ -68,10 +86,19 @@ function RegisterForm() {
                     value={formData.password}
                     onChange={handleChange}
                 />
+               
+                <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="confirm password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                />
                 <button type="submit">Sign Up</button>
             </form>
         </div>
     );
 }
+
 
 export default RegisterForm;

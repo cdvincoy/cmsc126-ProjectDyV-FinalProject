@@ -297,3 +297,39 @@ main > section button {
 main > section button:hover {
   background: #3a2d6b;
 }
+
+/* ── Footer ── */
+.auth-footer {
+    background-color: #cca9e8;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-logo img {
+    width: 160px;
+    height: auto;
+    margin-left: -4px;
+}
+
+.footer-copy {
+    font-size: 12px;
+    color: #426bc2;
+    margin-top: 4px;
+}
+
+.footer-icons {
+    display: flex;
+    gap: 16px;
+}
+
+.footer-icons img {
+    width: 40px;
+    height: 40px;
+}
