@@ -33,6 +33,7 @@ function LoginForm() {
             }
 
             console.log("Logged in user:", data);
+            localStorage.setItem("user", JSON.stringify(data)); // ← ADD THIS
 
             alert("Login successful!");
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./DashboardPage.css";
 import iconImg from "../assets/logo.png";
 import logoImg from "../assets/LIKHA.png";
@@ -7,7 +7,9 @@ import messengerIcon from "../assets/messenger.svg";
 import githubIcon from "../assets/github.svg";
 import linkedinIcon from "../assets/linkedin.svg";
 
-/* ─── Utility icon SVGs (non-social, kept inline as they're UI controls) ─── */
+const API = "http://localhost:5000";
+
+/* ─── Utility icon SVGs ─── */
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
     <polygon points="5 3 19 12 5 21 5 3" />
@@ -35,7 +37,6 @@ const EditIcon = () => (
   </svg>
 );
 
-/* ─── Social icon img helper ─── */
 const SocialIcons = [
   { src: facebookIcon,  alt: "Facebook",  key: "fb"  },
   { src: messengerIcon, alt: "Messenger", key: "msg" },
@@ -76,23 +77,27 @@ function Modal({ title, onClose, children }) {
 export default function DashboardPage() {
   const [page, setPage]           = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading]     = useState(true);
 
-  // Profile hero
+  // Get logged-in user from localStorage (saved during login)
+  const [currentUser, setCurrentUser] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  // Profile fields
   const [profileImg,  setProfileImg]  = useState("https://via.placeholder.com/300");
-  const [name,        setName]        = useState("NICOLE ASHLEY DY");
-  const [designation, setDesignation] = useState("UNDERGRADUATE STUDENT");
-  const [bio,         setBio]         = useState("I'm Dy, a third-year undergraduate student attending University of the Philippines Visayas. I have experience in programming languages such as Python, C, Java, JavaScript, and PHP. I also have skills in UI/UX design and front-end development using HTML and CSS.");
+  const [name,        setName]        = useState("");
+  const [designation, setDesignation] = useState("");
+  const [bio,         setBio]         = useState("");
   const [socials,     setSocials]     = useState({ fb: "#", msg: "#", gh: "#", li: "#" });
 
-  // Skills
-  const [softSkills, setSoftSkills] = useState([]);
-  const [hardSkills, setHardSkills] = useState([]);
-
-  // Projects
-  const [projects, setProjects] = useState([]);
-
-  // Achievements
-  const [achievements, setAchievements] = useState([]);
+  // Data from DB
+  const [softSkills,    setSoftSkills]    = useState([]);
+  const [hardSkills,    setHardSkills]    = useState([]);
+  const [projects,      setProjects]      = useState([]);
+  const [achievements,  setAchievements]  = useState([]);
+  const [allUsers,      setAllUsers]      = useState([]);
 
   // Modals
   const [modal,      setModal]      = useState(null);
@@ -103,50 +108,282 @@ export default function DashboardPage() {
   function openAdd(type)        { setForm({});          setEditTarget(null);    setModal(type); }
   function openEdit(type, item) { setForm({ ...item }); setEditTarget(item.id); setModal(type); }
 
-  /* ── SOFT SKILL CRUD ── */
-  function saveSoftSkill() {
+  /* ══════════════════ FETCH DATA ON LOAD ══════════════════ */
+  useEffect(() => {
+    if (!currentUser) return;
+
+    // Populate profile fields from stored user
+    setName(currentUser.name || "");
+    setBio(currentUser.bio || "");
+
+    const userId = currentUser.id;
+
+    async function fetchAll() {
+      setLoading(true);
+      try {
+        // Fetch all data in parallel, filter by user_id on frontend
+        const [skillsRes, projectsRes, awardsRes, usersRes] = await Promise.all([
+          fetch(`${API}/skills`),
+          fetch(`${API}/projects`),
+          fetch(`${API}/awards`),
+          fetch(`${API}/users`),
+        ]);
+
+        const [skillsData, projectsData, awardsData, usersData] = await Promise.all([
+          skillsRes.json(),
+          projectsRes.json(),
+          awardsRes.json(),
+          usersRes.json(),
+        ]);
+
+        // Filter by logged-in user
+        const userSkills   = skillsData.filter(s => s.user_id === userId);
+        const userProjects = projectsData.filter(p => p.user_id === userId);
+        const userAwards   = awardsData.filter(a => a.user_id === userId);
+
+        // Split skills into soft and hard
+        setSoftSkills(
+          userSkills
+            .filter(s => s.type === "soft")
+            .map(s => ({ id: s.id, name: s.name, icon: s.icon || "⭐", desc: s.description || "", active: false }))
+        );
+        setHardSkills(
+          userSkills
+            .filter(s => s.type === "hard")
+            .map(s => ({ id: s.id, name: s.name }))
+        );
+
+        setProjects(
+          userProjects.map(p => ({
+            id:   p.id,
+            name: p.title,
+            desc: p.description || "",
+            logo: p.logo || "",
+            link: p.link || "",
+            bg:   p.bg || "#251D4B",
+          }))
+        );
+
+        setAchievements(
+          userAwards.map(a => ({
+            id:    a.id,
+            title: a.title,
+            sub:   a.description || "",
+          }))
+        );
+
+        // All users for Portfolios page (exclude self)
+        setAllUsers(usersData.filter(u => u.id !== userId));
+
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAll();
+  }, [currentUser]);
+
+  /* ══════════════════ PROFILE SAVE ══════════════════ */
+  async function handleSaveProfile() {
+    if (!currentUser) return;
+    try {
+      const res = await fetch(`${API}/users/${currentUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email:    currentUser.email,
+          password: currentUser.password,
+          bio,
+          birthday: currentUser.birthday || null,
+          address:  currentUser.address  || null,
+        }),
+      });
+      const updated = await res.json();
+      // Update localStorage with new info
+      localStorage.setItem("user", JSON.stringify(updated));
+      setCurrentUser(updated);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    }
+    setIsEditing(false);
+  }
+
+  /* ══════════════════ SOFT SKILL CRUD ══════════════════ */
+  async function saveSoftSkill() {
     if (!form.name) return;
-    if (editTarget) {
-      setSoftSkills(ss => ss.map(s => s.id === editTarget ? { ...s, ...form } : s));
-    } else {
-      setSoftSkills(ss => [...ss, { id: Date.now(), icon: form.icon || "⭐", name: form.name, desc: form.desc || "", active: false }]);
+    try {
+      if (editTarget) {
+        // UPDATE
+        const res = await fetch(`${API}/skills/${editTarget}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: form.name, type: "soft", user_id: currentUser.id }),
+        });
+        const updated = await res.json();
+        setSoftSkills(ss => ss.map(s => s.id === editTarget
+          ? { ...s, name: updated.name, icon: form.icon || s.icon, desc: form.desc || s.desc }
+          : s
+        ));
+      } else {
+        // CREATE
+        const res = await fetch(`${API}/skills`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: form.name, type: "soft", user_id: currentUser.id }),
+        });
+        const created = await res.json();
+        setSoftSkills(ss => [...ss, {
+          id:     created.id,
+          icon:   form.icon || "⭐",
+          name:   created.name,
+          desc:   form.desc || "",
+          active: false,
+        }]);
+      }
+    } catch (err) {
+      console.error("Error saving soft skill:", err);
     }
     setModal(null);
   }
-  const deleteSoftSkill = id  => setSoftSkills(ss => ss.filter(s => s.id !== id));
-  const toggleSoftSkill = id  => setSoftSkills(ss => ss.map(s => s.id === id ? { ...s, active: !s.active } : s));
 
-  /* ── HARD SKILL CRUD ── */
-  function saveHardSkill() {
-    if (!form.name) return;
-    if (!hardSkills.includes(form.name)) setHardSkills(hs => [...hs, form.name]);
-    setModal(null);
+  async function deleteSoftSkill(id) {
+    try {
+      await fetch(`${API}/skills/${id}`, { method: "DELETE" });
+      setSoftSkills(ss => ss.filter(s => s.id !== id));
+    } catch (err) {
+      console.error("Error deleting soft skill:", err);
+    }
   }
-  const deleteHardSkill = name => setHardSkills(hs => hs.filter(h => h !== name));
 
-  /* ── PROJECT CRUD ── */
-  function saveProject() {
+  const toggleSoftSkill = id => setSoftSkills(ss => ss.map(s => s.id === id ? { ...s, active: !s.active } : s));
+
+  /* ══════════════════ HARD SKILL CRUD ══════════════════ */
+  async function saveHardSkill() {
     if (!form.name) return;
-    if (editTarget) {
-      setProjects(ps => ps.map(p => p.id === editTarget ? { ...p, ...form } : p));
-    } else {
-      setProjects(ps => [...ps, { id: Date.now(), logo: form.logo || "", name: form.name, desc: form.desc || "", bg: form.bg || "#251D4B" }]);
+    if (hardSkills.find(h => h.name === form.name)) { setModal(null); return; }
+    try {
+      const res = await fetch(`${API}/skills`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, type: "hard", user_id: currentUser.id }),
+      });
+      const created = await res.json();
+      setHardSkills(hs => [...hs, { id: created.id, name: created.name }]);
+    } catch (err) {
+      console.error("Error saving hard skill:", err);
     }
     setModal(null);
   }
-  const deleteProject = id => setProjects(ps => ps.filter(p => p.id !== id));
 
-  /* ── ACHIEVEMENT CRUD ── */
-  function saveAchievement() {
+  async function deleteHardSkill(id) {
+    try {
+      await fetch(`${API}/skills/${id}`, { method: "DELETE" });
+      setHardSkills(hs => hs.filter(h => h.id !== id));
+    } catch (err) {
+      console.error("Error deleting hard skill:", err);
+    }
+  }
+
+  /* ══════════════════ PROJECT CRUD ══════════════════ */
+  async function saveProject() {
+    if (!form.name) return;
+    try {
+      if (editTarget) {
+        const res = await fetch(`${API}/projects/${editTarget}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: form.name, description: form.desc, link: form.link || "" }),
+        });
+        const updated = await res.json();
+        setProjects(ps => ps.map(p => p.id === editTarget
+          ? { ...p, name: updated.title, desc: updated.description, link: updated.link, logo: form.logo || p.logo, bg: form.bg || p.bg }
+          : p
+        ));
+      } else {
+        const res = await fetch(`${API}/projects`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: form.name, description: form.desc || "", link: form.link || "", user_id: currentUser.id }),
+        });
+        const created = await res.json();
+        setProjects(ps => [...ps, {
+          id:   created.id,
+          name: created.title,
+          desc: created.description || "",
+          logo: form.logo || "",
+          link: created.link || "",
+          bg:   form.bg || "#251D4B",
+        }]);
+      }
+    } catch (err) {
+      console.error("Error saving project:", err);
+    }
+    setModal(null);
+  }
+
+  async function deleteProject(id) {
+    try {
+      await fetch(`${API}/projects/${id}`, { method: "DELETE" });
+      setProjects(ps => ps.filter(p => p.id !== id));
+    } catch (err) {
+      console.error("Error deleting project:", err);
+    }
+  }
+
+  /* ══════════════════ ACHIEVEMENT CRUD ══════════════════ */
+  async function saveAchievement() {
     if (!form.title) return;
-    if (editTarget) {
-      setAchievements(as => as.map(a => a.id === editTarget ? { ...a, ...form } : a));
-    } else {
-      setAchievements(as => [...as, { id: Date.now(), title: form.title, sub: form.sub || "" }]);
+    try {
+      if (editTarget) {
+        const res = await fetch(`${API}/awards/${editTarget}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: form.title, description: form.sub || "", date: null, user_id: currentUser.id }),
+        });
+        const updated = await res.json();
+        setAchievements(as => as.map(a => a.id === editTarget
+          ? { ...a, title: updated.title, sub: updated.description }
+          : a
+        ));
+      } else {
+        const res = await fetch(`${API}/awards`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: form.title, description: form.sub || "", date: null, user_id: currentUser.id }),
+        });
+        const created = await res.json();
+        setAchievements(as => [...as, { id: created.id, title: created.title, sub: created.description || "" }]);
+      }
+    } catch (err) {
+      console.error("Error saving achievement:", err);
     }
     setModal(null);
   }
-  const deleteAchievement = id => setAchievements(as => as.filter(a => a.id !== id));
+
+  async function deleteAchievement(id) {
+    try {
+      await fetch(`${API}/awards/${id}`, { method: "DELETE" });
+      setAchievements(as => as.filter(a => a.id !== id));
+    } catch (err) {
+      console.error("Error deleting achievement:", err);
+    }
+  }
+
+  /* ══════════════════ REDIRECT IF NOT LOGGED IN ══════════════════ */
+  if (!currentUser) {
+    return (
+      <div className="simple-page">
+        <p>You are not logged in. Please <a href="/AuthPage">log in</a>.</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return <div className="simple-page"><p>Loading...</p></div>;
+  }
 
   return (
     <div className="dashboard-root">
@@ -161,9 +398,9 @@ export default function DashboardPage() {
         </div>
         <div className="header-bottom-row">
           <div className="user-info" onClick={() => setPage("settings")}>
-            <div className="user-avatar">NA</div>
-            <span className="user-name">Nicole Ashley Dy</span>
-            <span className="user-sub">Undergraduate Student</span>
+            <div className="user-avatar">{currentUser.name?.slice(0, 2).toUpperCase()}</div>
+            <span className="user-name">{currentUser.name}</span>
+            <span className="user-sub">{designation || "Student"}</span>
           </div>
           <nav className="header-nav">
             {["profile", "portfolios", "jobs", "about"].map(p => (
@@ -240,20 +477,22 @@ export default function DashboardPage() {
                 </>
               ) : (
                 <>
-                  <p className="hero-designation">{designation}</p>
+                  <p className="hero-designation">{designation || "Add your designation"}</p>
                   <h1 className="hero-name">{name}</h1>
-                  <p className="hero-bio">{bio}</p>
+                  <p className="hero-bio">{bio || "Add a bio to tell people about yourself."}</p>
                 </>
               )}
 
-              {/* Social icons + CV/Edit button */}
               <div className="social-row">
                 {SocialIcons.map(({ src, alt, key }) => (
                   <a key={key} href={socials[key]} className="social-btn">
                     <img src={src} alt={alt} className="social-icon-img" />
                   </a>
                 ))}
-                <button className="cv-btn" onClick={() => setIsEditing(!isEditing)}>
+                <button
+                  className="cv-btn"
+                  onClick={isEditing ? handleSaveProfile : () => setIsEditing(true)}
+                >
                   {isEditing ? "SAVE" : "EDIT CV"}
                 </button>
               </div>
@@ -302,17 +541,17 @@ export default function DashboardPage() {
             )}
             <div className="hard-grid">
               {hardSkills.map(h => (
-                <div key={h} className="hard-card">
+                <div key={h.id} className="hard-card">
                   {isEditing && (
                     <div className="card-actions">
-                      <button className="icon-btn" onClick={() => deleteHardSkill(h)}><TrashIcon /></button>
+                      <button className="icon-btn" onClick={() => deleteHardSkill(h.id)}><TrashIcon /></button>
                     </div>
                   )}
-                  {HARD_SKILL_LOGOS[h]
-                    ? <img src={HARD_SKILL_LOGOS[h]} alt={h} className="hard-logo" />
-                    : <div className="hard-fallback">{h[0]}</div>
+                  {HARD_SKILL_LOGOS[h.name]
+                    ? <img src={HARD_SKILL_LOGOS[h.name]} alt={h.name} className="hard-logo" />
+                    : <div className="hard-fallback">{h.name[0]}</div>
                   }
-                  <p className="hard-name">{h}</p>
+                  <p className="hard-name">{h.name}</p>
                 </div>
               ))}
               {isEditing && (
@@ -352,7 +591,11 @@ export default function DashboardPage() {
                     <h3 className="project-name">{p.name}</h3>
                     <p className="project-desc">{p.desc}</p>
                   </div>
-                  <button className="play-btn"><PlayIcon /></button>
+                  {p.link && (
+                    <a href={p.link} target="_blank" rel="noreferrer" className="play-btn">
+                      <PlayIcon />
+                    </a>
+                  )}
                   {isEditing && (
                     <div className="project-actions">
                       <button className="icon-btn-light" onClick={() => openEdit("editProject", p)}><EditIcon /></button>
@@ -402,45 +645,49 @@ export default function DashboardPage() {
       {/* ══════════════════ PORTFOLIOS ══════════════════ */}
       {page === "portfolios" && (
         <main>
-          {[
-            { name: "CLAIRE VINCOY", role: "UX/UI ENGINEER", bio: "I'm Claire, a UI/UX engineer with experience in designing intuitive and user-centered digital interfaces. I have skills in wireframing, prototyping, visual design, and front-end development using tools such as Figma, HTML, CSS, and JavaScript.", img: "https://via.placeholder.com/260", dark: false },
-          ].map((u, i) => {
-            const bg     = u.dark ? "#251D4B" : "white";
-            const clr    = u.dark ? "white"   : "#1a1a2e";
-            const subClr = u.dark ? "rgba(255,255,255,.6)" : "#888";
-            const bioClr = u.dark ? "rgba(255,255,255,.8)" : "#555";
-            const socialHrefs = { fb: "#", msg: "#", gh: "#", li: "#" };
-            return (
-              <div key={i} className="portfolio-row" style={{ background: bg, color: clr }}>
-                <div className="portfolio-left">
-                  <img
-                    src={u.img}
-                    alt={u.name}
-                    className="portfolio-img"
-                    style={{ border: u.dark ? "3px solid rgba(255,255,255,.2)" : "3px solid #eee" }}
-                  />
-                </div>
-                <div className="portfolio-right">
-                  <p className="portfolio-role" style={{ color: subClr }}>{u.role}</p>
-                  <h2 className="portfolio-name" style={{ color: clr }}>{u.name}</h2>
-                  <p className="portfolio-bio" style={{ color: bioClr }}>{u.bio}</p>
-                  <div className="portfolio-social-row">
-                    {SocialIcons.map(({ src, alt, key }) => (
-                      <a
-                        key={key}
-                        href={socialHrefs[key]}
-                        className="social-btn"
-                        style={{ border: u.dark ? "1.5px solid rgba(255,255,255,.3)" : "1.5px solid #d0d0e0" }}
-                      >
-                        <img src={src} alt={alt} className="social-icon-img" />
-                      </a>
-                    ))}
-                    <button className="view-port-btn">VIEW PORTFOLIO</button>
+          {allUsers.length === 0 ? (
+            <div className="simple-page">
+              <p>No other users found.</p>
+            </div>
+          ) : (
+            allUsers.map((u, i) => {
+              const dark   = i % 2 === 0;
+              const bg     = dark ? "#251D4B" : "white";
+              const clr    = dark ? "white"   : "#1a1a2e";
+              const subClr = dark ? "rgba(255,255,255,.6)" : "#888";
+              const bioClr = dark ? "rgba(255,255,255,.8)" : "#555";
+              return (
+                <div key={u.id} className="portfolio-row" style={{ background: bg, color: clr }}>
+                  <div className="portfolio-left">
+                    <img
+                      src="https://via.placeholder.com/260"
+                      alt={u.name}
+                      className="portfolio-img"
+                      style={{ border: dark ? "3px solid rgba(255,255,255,.2)" : "3px solid #eee" }}
+                    />
+                  </div>
+                  <div className="portfolio-right">
+                    <p className="portfolio-role" style={{ color: subClr }}>STUDENT</p>
+                    <h2 className="portfolio-name" style={{ color: clr }}>{u.name.toUpperCase()}</h2>
+                    <p className="portfolio-bio" style={{ color: bioClr }}>{u.bio || "No bio yet."}</p>
+                    <div className="portfolio-social-row">
+                      {SocialIcons.map(({ src, alt, key }) => (
+                        <a
+                          key={key}
+                          href="#"
+                          className="social-btn"
+                          style={{ border: dark ? "1.5px solid rgba(255,255,255,.3)" : "1.5px solid #d0d0e0" }}
+                        >
+                          <img src={src} alt={alt} className="social-icon-img" />
+                        </a>
+                      ))}
+                      <button className="view-port-btn">VIEW PORTFOLIO</button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </main>
       )}
 
@@ -466,6 +713,16 @@ export default function DashboardPage() {
           <h2 className="simple-title">Settings</h2>
           <button className="settings-edit-btn" onClick={() => { setPage("profile"); setIsEditing(true); }}>
             Edit Profile
+          </button>
+          <button
+            className="settings-edit-btn"
+            style={{ marginTop: 12, background: "#c00" }}
+            onClick={() => {
+              localStorage.removeItem("user");
+              window.location.href = "/login";
+            }}
+          >
+            Log Out
           </button>
         </main>
       )}
@@ -499,20 +756,13 @@ export default function DashboardPage() {
 
       {/* ══════════════════ MODALS ══════════════════ */}
 
-      {/* Add Soft Skill */}
       {modal === "softSkill" && (
         <Modal title="Add Soft Skill" onClose={() => setModal(null)}>
           <div className="form-col">
             <label className="form-label">Icon (emoji)</label>
             <div className="icon-picker">
               {SOFT_SKILL_ICONS.map(ic => (
-                <button
-                  key={ic}
-                  className={`icon-option${form.icon === ic ? " active" : ""}`}
-                  onClick={() => setF("icon", ic)}
-                >
-                  {ic}
-                </button>
+                <button key={ic} className={`icon-option${form.icon === ic ? " active" : ""}`} onClick={() => setF("icon", ic)}>{ic}</button>
               ))}
             </div>
             <label className="form-label">Name *</label>
@@ -524,20 +774,13 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Edit Soft Skill */}
       {modal === "editSoft" && (
         <Modal title="Edit Soft Skill" onClose={() => setModal(null)}>
           <div className="form-col">
             <label className="form-label">Icon (emoji)</label>
             <div className="icon-picker">
               {SOFT_SKILL_ICONS.map(ic => (
-                <button
-                  key={ic}
-                  className={`icon-option${form.icon === ic ? " active" : ""}`}
-                  onClick={() => setF("icon", ic)}
-                >
-                  {ic}
-                </button>
+                <button key={ic} className={`icon-option${form.icon === ic ? " active" : ""}`} onClick={() => setF("icon", ic)}>{ic}</button>
               ))}
             </div>
             <label className="form-label">Name *</label>
@@ -549,14 +792,13 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Add Hard Skill */}
       {modal === "hardSkill" && (
         <Modal title="Add Hard Skill" onClose={() => setModal(null)}>
           <div className="form-col">
             <label className="form-label">Select a skill</label>
             <select className="form-input" value={form.name || ""} onChange={e => setF("name", e.target.value)}>
               <option value="">— choose from list —</option>
-              {Object.keys(HARD_SKILL_LOGOS).filter(k => !hardSkills.includes(k)).map(k => (
+              {Object.keys(HARD_SKILL_LOGOS).filter(k => !hardSkills.find(h => h.name === k)).map(k => (
                 <option key={k} value={k}>{k}</option>
               ))}
             </select>
@@ -567,7 +809,6 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Add Project */}
       {modal === "project" && (
         <Modal title="Add Project" onClose={() => setModal(null)}>
           <div className="form-col">
@@ -575,6 +816,8 @@ export default function DashboardPage() {
             <input className="form-input" value={form.name || ""} onChange={e => setF("name", e.target.value)} placeholder="e.g. 22 Coffee" />
             <label className="form-label">Description</label>
             <textarea className="form-textarea" value={form.desc || ""} onChange={e => setF("desc", e.target.value)} placeholder="Brief description..." />
+            <label className="form-label">Link (optional)</label>
+            <input className="form-input" value={form.link || ""} onChange={e => setF("link", e.target.value)} placeholder="https://..." />
             <label className="form-label">Logo URL (optional)</label>
             <input className="form-input" value={form.logo || ""} onChange={e => setF("logo", e.target.value)} placeholder="https://..." />
             <label className="form-label">Background Color</label>
@@ -584,7 +827,6 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Edit Project */}
       {modal === "editProject" && (
         <Modal title="Edit Project" onClose={() => setModal(null)}>
           <div className="form-col">
@@ -592,6 +834,8 @@ export default function DashboardPage() {
             <input className="form-input" value={form.name || ""} onChange={e => setF("name", e.target.value)} />
             <label className="form-label">Description</label>
             <textarea className="form-textarea" value={form.desc || ""} onChange={e => setF("desc", e.target.value)} />
+            <label className="form-label">Link</label>
+            <input className="form-input" value={form.link || ""} onChange={e => setF("link", e.target.value)} />
             <label className="form-label">Logo URL</label>
             <input className="form-input" value={form.logo || ""} onChange={e => setF("logo", e.target.value)} />
             <label className="form-label">Background Color</label>
@@ -601,7 +845,6 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Add Achievement */}
       {modal === "achievement" && (
         <Modal title="Add Achievement" onClose={() => setModal(null)}>
           <div className="form-col">
@@ -614,7 +857,6 @@ export default function DashboardPage() {
         </Modal>
       )}
 
-      {/* Edit Achievement */}
       {modal === "editAchievement" && (
         <Modal title="Edit Achievement" onClose={() => setModal(null)}>
           <div className="form-col">
