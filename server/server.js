@@ -108,7 +108,7 @@ app.put("/users/:id", async (req, res) => {
   try {
 
     const { id } = req.params;
-    const { name, email, password, bio, birthday, address } = req.body;
+    const { name, email, password, bio, birthday, address, profile_img, designation } = req.body;
 
     const updatedUser = await pool.query(
       `UPDATE users
@@ -117,10 +117,12 @@ app.put("/users/:id", async (req, res) => {
            password = $3,
            bio = $4,
            birthday = $5,
-           address = $6
-       WHERE id = $7
+           address = $6,
+           profile_img = $7,
+           designation = $8
+       WHERE id = $9
        RETURNING *`,
-      [name, email, password, bio, birthday, address, id]
+      [name, email, password, bio, birthday, address, profile_img, designation, id]
     );
 
     res.json(updatedUser.rows[0]);

@@ -99,6 +99,38 @@ export default function DashboardPage() {
   const [achievements,  setAchievements]  = useState([]);
   const [allUsers,      setAllUsers]      = useState([]);
 
+  const [settingsForm, setSettingsForm] = useState({
+  name:     currentUser?.name     || "",
+  email:    currentUser?.email    || "",
+  birthday: currentUser?.birthday || "",
+  address: currentUser?.address   || "",
+  password: "",
+});
+
+async function handleSaveSettings() {
+  try {
+    const res = await fetch(`${API}/users/${currentUser.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name:        settingsForm.name,
+        email:       settingsForm.email,
+        password:    settingsForm.password || currentUser.password,
+        bio:         currentUser.bio       || "",
+        birthday:    settingsForm.birthday || null,
+        address:     settingsForm.address   || null,
+        profile_img: currentUser.profile_img || null,
+      }),
+    });
+    const updated = await res.json();
+    localStorage.setItem("user", JSON.stringify(updated));
+    setCurrentUser(updated);
+    alert("Settings saved!");
+  } catch (err) {
+    console.error("Error saving settings:", err);
+  }
+}
+
   // Modals
   const [modal,      setModal]      = useState(null);
   const [editTarget, setEditTarget] = useState(null);
@@ -115,6 +147,7 @@ export default function DashboardPage() {
     // Populate profile fields from stored user
     setName(currentUser.name || "");
     setBio(currentUser.bio || "");
+    setDesignation(currentUser.designation || "");
 
     const userId = currentUser.id;
 
@@ -199,6 +232,8 @@ export default function DashboardPage() {
           bio,
           birthday: currentUser.birthday || null,
           address:  currentUser.address  || null,
+          profile_img: profileImg,
+          designation,
         }),
       });
       const updated = await res.json();
@@ -400,7 +435,7 @@ export default function DashboardPage() {
           <div className="user-info" onClick={() => setPage("settings")}>
             <div className="user-avatar">{currentUser.name?.slice(0, 2).toUpperCase()}</div>
             <span className="user-name">{currentUser.name}</span>
-            <span className="user-sub">{designation || "Student"}</span>
+            <span className="user-sub">{designation}</span>
           </div>
           <nav className="header-nav">
             {["profile", "portfolios", "jobs", "about"].map(p => (
@@ -431,7 +466,8 @@ export default function DashboardPage() {
                     <input
                       type="text"
                       placeholder="Paste image URL"
-                      onBlur={e => e.target.value && setProfileImg(e.target.value)}
+                      value={profileImg}
+                      onChange={e => setProfileImg(e.target.value)}
                       className="img-url-input"
                     />
                   </label>
@@ -709,23 +745,75 @@ export default function DashboardPage() {
 
       {/* ══════════════════ SETTINGS ══════════════════ */}
       {page === "settings" && (
-        <main className="simple-page">
-          <h2 className="simple-title">Settings</h2>
-          <button className="settings-edit-btn" onClick={() => { setPage("profile"); setIsEditing(true); }}>
-            Edit Profile
-          </button>
-          <button
-            className="settings-edit-btn"
-            style={{ marginTop: 12, background: "#c00" }}
-            onClick={() => {
-              localStorage.removeItem("user");
-              window.location.href = "/login";
-            }}
-          >
-            Log Out
-          </button>
-        </main>
-      )}
+  <main className="simple-page">
+    <h2 className="simple-title">Settings</h2>
+
+    <div className="settings-form">
+
+      <h3 className="settings-section-title">Basic Info</h3>
+
+      <label className="form-label">Name</label>
+      <input
+        className="form-input"
+        value={settingsForm.name || ""}
+        onChange={e => setSettingsForm(f => ({ ...f, name: e.target.value }))}
+        placeholder="Full name"
+      />
+
+      <label className="form-label">Email</label>
+      <input
+        className="form-input"
+        type="email"
+        value={settingsForm.email || ""}
+        onChange={e => setSettingsForm(f => ({ ...f, email: e.target.value }))}
+        placeholder="Email"
+      />
+
+      <label className="form-label">Birthday</label>
+      <input
+        className="form-input"
+        type="date"
+        value={settingsForm.birthday || ""}
+        onChange={e => setSettingsForm(f => ({ ...f, birthday: e.target.value }))}
+      />
+
+      <label className="form-label">Address</label>
+      <input
+      className="form-input"
+      value={settingsForm.address || ""}
+      onChange={e => setSettingsForm(f => ({ ...f, address: e.target.value }))}
+      placeholder="Your address"
+/>
+
+      <label className="form-label">New Password</label>
+      <input
+        className="form-input"
+        type="password"
+        value={settingsForm.password || ""}
+        onChange={e => setSettingsForm(f => ({ ...f, password: e.target.value }))}
+        placeholder="Leave blank to keep current"
+      />
+
+      <button className="save-btn" onClick={handleSaveSettings}>
+        Save Changes
+      </button>
+
+      <hr style={{ margin: "24px 0", opacity: 0.2 }} />
+
+      <button
+        className="settings-edit-btn"
+        style={{ background: "#c00", width: "100%" }}
+        onClick={() => {
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+        }}
+      >
+        Log Out
+      </button>
+
+    </div>
+  </main>
+)}
 
       {/* ── FOOTER ── */}
       <footer className="dashboard-footer">

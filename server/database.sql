@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
   bio TEXT,
   birthday TIMESTAMP,
   address TEXT,
+  profile_img TEXT,
+  designation TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
