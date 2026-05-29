@@ -13,6 +13,10 @@
   color: #1a1a2e;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 /* ══════════════════ HEADER ══════════════════ */
 .dashboard-header {
   background: #251D4B;
