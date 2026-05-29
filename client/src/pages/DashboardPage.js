@@ -805,7 +805,7 @@ async function handleSaveSettings() {
         style={{ background: "#c00", width: "100%" }}
         onClick={() => {
           localStorage.removeItem("user");
-          window.location.href = "/login";
+          window.location.href = "/";
         }}
       >
         Log Out
