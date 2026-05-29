@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS users (
   address TEXT,
   profile_img TEXT,
   designation TEXT,
+  fb_link TEXT,
+  messenger_link TEXT,
+  github  TEXT,
+  linkedin  TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -98,5 +102,14 @@ CREATE TABLE IF NOT EXISTS applications (
   user_id INT REFERENCES users(id) ON DELETE CASCADE,
   job_id INT REFERENCES jobs(id) ON DELETE CASCADE,
 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Comments
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY,
+  message TEXT NOT NULL,
+  user_id INT REFERENCES users(id),
+  portfolio_owner_id INT REFERENCES users(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

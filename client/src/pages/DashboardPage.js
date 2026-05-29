@@ -7,6 +7,7 @@ import messengerIcon from "../assets/messenger.svg";
 import githubIcon from "../assets/github.svg";
 import linkedinIcon from "../assets/linkedin.svg";
 import aboutBannerImg from "../assets/banner.jpg";
+import PortfolioPage from "./PortfolioPage";
 
 const API = "http://localhost:5000";
 
@@ -79,6 +80,8 @@ export default function DashboardPage() {
   const [page, setPage]           = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading]     = useState(true);
+  const [viewUserId, setViewUserId] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // Get logged-in user from localStorage (saved during login)
   const [currentUser, setCurrentUser] = useState(() => {
@@ -87,7 +90,7 @@ export default function DashboardPage() {
   });
 
   // Profile fields
-  const [profileImg,  setProfileImg]  = useState("https://via.placeholder.com/300");
+  const [profileImg,  setProfileImg]  = useState("");
   const [name,        setName]        = useState("");
   const [designation, setDesignation] = useState("");
   const [bio,         setBio]         = useState("");
@@ -149,6 +152,7 @@ async function handleSaveSettings() {
     setName(currentUser.name || "");
     setBio(currentUser.bio || "");
     setDesignation(currentUser.designation || "");
+    setProfileImg(currentUser.profile_img || "");
 
     const userId = currentUser.id;
 
@@ -460,7 +464,7 @@ async function handleSaveSettings() {
           <section className="hero-section">
             <div className="hero-left">
               <div className="profile-img-wrap">
-                <img src={profileImg} alt="profile" className="profile-img" />
+                <img src={currentUser.profile_img} alt="profile" className="profile-img" />
                 {isEditing && (
                   <label className="img-overlay">
                     <span style={{ fontSize: 11 }}>Change photo</span>
@@ -697,14 +701,13 @@ async function handleSaveSettings() {
                 <div key={u.id} className="portfolio-row" style={{ background: bg, color: clr }}>
                   <div className="portfolio-left">
                     <img
-                      src="https://via.placeholder.com/260"
-                      alt={u.name}
+                      src={u.profile_img}
                       className="portfolio-img"
                       style={{ border: dark ? "3px solid rgba(255,255,255,.2)" : "3px solid #eee" }}
                     />
                   </div>
                   <div className="portfolio-right">
-                    <p className="portfolio-role" style={{ color: subClr }}>STUDENT</p>
+                    <p className="portfolio-role" style={{ color: subClr }}>{u.designation || "No designation yet."}</p>
                     <h2 className="portfolio-name" style={{ color: clr }}>{u.name.toUpperCase()}</h2>
                     <p className="portfolio-bio" style={{ color: bioClr }}>{u.bio || "No bio yet."}</p>
                     <div className="portfolio-social-row">
@@ -718,7 +721,9 @@ async function handleSaveSettings() {
                           <img src={src} alt={alt} className="social-icon-img" />
                         </a>
                       ))}
-                      <button className="view-port-btn">VIEW PORTFOLIO</button>
+                      <button
+                      className="view-port-btn" 
+                      onClick={() => { setViewUserId(u.id); setSelectedUser(u); setPage("portfolio"); }}>VIEW PORTFOLIO</button>
                     </div>
                   </div>
                 </div>
@@ -749,6 +754,9 @@ async function handleSaveSettings() {
           </p>
         </main>
       )}
+      {/* ══════════════════ PORTFOLIO ══════════════════ */}
+      {page === "portfolio" && (
+    <PortfolioPage userId={viewUserId} user={selectedUser} onBack={() => setPage("portfolios")}/>)}
 
       {/* ══════════════════ SETTINGS ══════════════════ */}
       {page === "settings" && (

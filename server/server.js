@@ -974,3 +974,53 @@ app.delete("/applications/:id", async (req, res) => {
 app.listen(5000, () => {
   console.log("Server started on port 5000");
 });
+
+// GET comments for a portfolio owner
+app.get("/comments/:portfolio_owner_id", async (req, res) => {
+  try {
+    const { portfolio_owner_id } = req.params;
+    const result = await pool.query(
+      `SELECT comments.*, users.name as commenter_name 
+       FROM comments 
+       JOIN users ON comments.user_id = users.id
+       WHERE portfolio_owner_id = $1
+       ORDER BY created_at DESC`,
+      [portfolio_owner_id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// POST a comment
+app.post("/comments", async (req, res) => {
+  try {
+    const { message, user_id, portfolio_owner_id } = req.body;
+    const result = await pool.query(
+      `INSERT INTO comments (message, user_id, portfolio_owner_id)
+       VALUES ($1, $2, $3) RETURNING *`,
+      [message, user_id, portfolio_owner_id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// DELETE a comment (only the commenter can delete)
+app.delete("/comments/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      "DELETE FROM comments WHERE id = $1 RETURNING *",
+      [id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
