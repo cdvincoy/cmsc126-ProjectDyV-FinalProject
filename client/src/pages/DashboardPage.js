@@ -731,6 +731,7 @@ async function handleSaveSettings() {
       {/* ══════════════════ JOBS ══════════════════ */}
       {page === "jobs" && (
         <main className="simple-page">
+          <h2><strong>Jobs</strong></h2>
           <p className="simple-text"><i>The jobs feature is coming soon!</i></p>
         </main>
       )}
