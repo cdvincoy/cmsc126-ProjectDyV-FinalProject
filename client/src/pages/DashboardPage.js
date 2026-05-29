@@ -6,6 +6,7 @@ import facebookIcon from "../assets/facebook.svg";
 import messengerIcon from "../assets/messenger.svg";
 import githubIcon from "../assets/github.svg";
 import linkedinIcon from "../assets/linkedin.svg";
+import aboutBannerImg from "../assets/banner.jpg";
 
 const API = "http://localhost:5000";
 
@@ -730,16 +731,22 @@ async function handleSaveSettings() {
       {/* ══════════════════ JOBS ══════════════════ */}
       {page === "jobs" && (
         <main className="simple-page">
-          <h2 className="simple-title">Jobs / Collaboration</h2>
-          <p className="simple-text">Looking for teammates posts will appear here.</p>
+          <h2><strong>Jobs</strong></h2>
+          <p className="simple-text"><i>The jobs feature is coming soon!</i></p>
         </main>
       )}
 
       {/* ══════════════════ ABOUT ══════════════════ */}
       {page === "about" && (
         <main className="simple-page">
+          <div className="about-banner">
+            <img src={aboutBannerImg} alt="About" />
+          </div>
+
           <h2 className="simple-title">About Likha</h2>
-          <p className="simple-text">A student collaboration and portfolio platform built for UP Visayas students.</p>
+          <p className="simple-text">
+            A student collaboration and portfolio platform built for UP Visayas students.
+          </p>
         </main>
       )}
 
@@ -802,7 +809,7 @@ async function handleSaveSettings() {
 
       <button
         className="settings-edit-btn"
-        style={{ background: "#c00", width: "100%" }}
+        style={{ background: "#251d4b", width: "100%" }}
         onClick={() => {
           localStorage.removeItem("user");
           window.location.href = "/";
