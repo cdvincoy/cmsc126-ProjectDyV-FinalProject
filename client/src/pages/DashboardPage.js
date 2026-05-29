@@ -802,7 +802,7 @@ async function handleSaveSettings() {
 
       <button
         className="settings-edit-btn"
-        style={{ background: "#c00", width: "100%" }}
+        style={{ background: "#251d4b", width: "100%" }}
         onClick={() => {
           localStorage.removeItem("user");
           window.location.href = "/login";
