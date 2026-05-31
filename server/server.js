@@ -4,7 +4,9 @@ const cors = require("cors");
 const app = express();
 const pool = require("./db");
 
-app.use(cors());
+app.use(cors({
+  origin: "https://cmsc126-projectdyv-finalproject-1.onrender.com"
+}));
 app.use(express.json());
 
 
@@ -972,7 +974,7 @@ app.delete("/applications/:id", async (req, res) => {
 });
 
 // SERVER
-app.listen(5000, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log("Server started on port 5000");
 });
 
