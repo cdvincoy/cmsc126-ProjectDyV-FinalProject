@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API = process.env.REACT_APP_API_URL;
 
 function RegisterForm() {
     const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ function RegisterForm() {
 
 
         try {
-            const response = await fetch("http://localhost:5000/users", {
+            const response = await fetch(`${API}/users`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

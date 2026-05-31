@@ -9,7 +9,7 @@ function ProjectList() {
   const [editLink, setEditLink] = useState("");
 
   const fetchProjects = async () => {
-    const response = await fetch("http://localhost:5000/projects");
+    const response = await fetch(`${API}/projects`);
     const data = await response.json();
     setProjects(data);
   };
@@ -34,7 +34,7 @@ function ProjectList() {
             link: editLink
     };
 
-    const response = await fetch(`http://localhost:5000/projects/${id}`, {
+    const response = await fetch(`${API}/projects/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -63,7 +63,7 @@ function ProjectList() {
 
     try {
 
-      await fetch(`http://localhost:5000/projects/${id}`, {
+      await fetch(`${API}/projects/${id}`, {
         method: "DELETE"
       });
 

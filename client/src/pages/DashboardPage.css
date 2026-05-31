@@ -1,4 +1,4 @@
-/* ══════════════════ GLOBAL ══════════════════ */
+/* Global */
 *,
 *::before,
 *::after {
@@ -9,7 +9,7 @@ main {
   flex: 1;
 }
 
-/* ══════════════════ ROOT ══════════════════ */
+/* Root */
 .dashboard-root {
   min-height: 100vh;
   background: #f4f4f8;
@@ -24,7 +24,7 @@ html {
   overflow-y: scroll;
 }
 
-/* ══════════════════ HEADER ══════════════════ */
+/* Header */
 .dashboard-header {
   background: #251D4B;
   position: sticky;
@@ -281,7 +281,7 @@ html {
   width: 160px;
 }
 
-/* ══════════════════ SOCIAL ICONS ══════════════════ */
+/* Social Icons */
 .social-row {
   display: flex;
   gap: 10px;
@@ -326,7 +326,7 @@ html {
   letter-spacing: 1px;
 }
 
-/* ══════════════════ SECTIONS ══════════════════ */
+/* Sections */
 .section {
   padding: 48px 60px;
 }
@@ -361,7 +361,7 @@ html {
   font-style: italic;
 }
 
-/* ══════════════════ SOFT SKILLS ══════════════════ */
+/* Soft Skills */
 .soft-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -458,7 +458,7 @@ html {
   font-weight: 600;
 }
 
-/* ══════════════════ HARD SKILLS ══════════════════ */
+/* Hard Skills */
 .hard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -504,7 +504,7 @@ html {
   text-align: center;
 }
 
-/* ══════════════════ PROJECTS ══════════════════ */
+/* Projects */
 .project-section {
   background: #f4f4f8;
 }
@@ -618,7 +618,7 @@ html {
   cursor: pointer;
 }
 
-/* ══════════════════ ACHIEVEMENTS ══════════════════ */
+/* Achievements */
 .ach-header-row {
   display: flex;
   align-items: center;
@@ -668,7 +668,7 @@ html {
   gap: 4px;
 }
 
-/* ══════════════════ PORTFOLIOS ══════════════════ */
+/* Portfolios */
 .portfolio-row {
   display: flex;
   gap: 48px;
@@ -736,7 +736,7 @@ html {
   margin-left: 4px;
 }
 
-/* ══════════════════ SIMPLE PAGES ══════════════════ */
+/* Simple Pages */
 .simple-page {
   padding: 60px;
   min-height: 50vh;
@@ -766,7 +766,7 @@ html {
   font-size: 14px;
 }
 
-/* ══════════════════ FOOTER ══════════════════ */
+/* Footer */
 .dashboard-footer {
   background: #cca9e8;
   padding: 24px 60px;
@@ -817,7 +817,7 @@ html {
   height: 40px;
 }
 
-/* ══════════════════ MODAL ══════════════════ */
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./PortfolioPage.css";
 
-const API = "http://localhost:5000";
+// const API = "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL;
 
-/* ─── Utility icon SVGs ─── */
+// Utility
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
     <polygon points="5 3 19 12 5 21 5 3" />
@@ -137,7 +138,7 @@ export default function PortfolioPage({
     fetchPortfolio();
   }, [userId, initialUser]);
 
-  /* ── Loading State ── */
+//  Loading State
   if (loading) {
     return (
       <div className="pf-loading">
@@ -147,7 +148,7 @@ export default function PortfolioPage({
     );
   }
 
-  /* ── Error State ── */
+//  Error State
   if (!user) {
     return (
       <div className="pf-loading">
@@ -164,14 +165,14 @@ export default function PortfolioPage({
 
   return (
     <div className="pf-root">
-      {/* ── Top Bar ── */}
+      {/* Top Bar */}
       <div className="pf-topbar">
         <button className="pf-back-btn" onClick={onBack}>
           <BackIcon /> Back to Portfolios
         </button>
       </div>
 
-      {/* ── HERO ── */}
+      {/* Hero */}
       <section className="pf-hero">
         <div className="pf-hero-left">
           {user.profile_img ? (
@@ -189,7 +190,7 @@ export default function PortfolioPage({
           <p className="pf-label">ABOUT ME</p>
 
           <p className="pf-designation">
-            {user.designation || "Student"}
+            {user.designation}
           </p>
 
           <h1 className="pf-name">{user.name}</h1>
@@ -200,7 +201,7 @@ export default function PortfolioPage({
         </div>
       </section>
 
-      {/* ── SKILLS ── */}
+      {/* Skills */}
       <section className="pf-section">
         <h2 className="pf-section-title">SKILLS</h2>
 
@@ -261,7 +262,7 @@ export default function PortfolioPage({
         )}
       </section>
 
-      {/* ── PROJECTS ── */}
+      {/* Projects */}
       <section className="pf-project-section">
         <div className="pf-projects-header">
           <h2 className="pf-projects-label">PROJECTS</h2>
@@ -316,7 +317,7 @@ export default function PortfolioPage({
         )}
       </section>
 
-      {/* ── ACHIEVEMENTS ── */}
+      {/* Achievement */}
       <section className="pf-section">
         <h2 className="pf-section-title">ACHIEVEMENTS</h2>
 

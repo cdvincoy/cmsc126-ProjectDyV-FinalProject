@@ -1,3 +1,4 @@
+// import { supabase } from "../supabaseClient";
 import React, { useState, useEffect } from "react";
 import "./DashboardPage.css";
 import iconImg from "../assets/logo.png";
@@ -9,9 +10,10 @@ import linkedinIcon from "../assets/linkedin.svg";
 import aboutBannerImg from "../assets/banner.jpg";
 import PortfolioPage from "./PortfolioPage";
 
-const API = "http://localhost:5000";
+// const API = "http://localhost:5000";
+const API = process.env.REACT_APP_API_URL;
 
-/* ─── Utility icon SVGs ─── */
+// Utility icon
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
     <polygon points="5 3 19 12 5 21 5 3" />
@@ -60,7 +62,7 @@ const HARD_SKILL_LOGOS = {
   MySQL:      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
 };
 
-/* ─── MODAL ─── */
+// Modal
 function Modal({ title, onClose, children }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -75,7 +77,7 @@ function Modal({ title, onClose, children }) {
   );
 }
 
-/* ─── MAIN COMPONENT ─── */
+// Main Component
 export default function DashboardPage() {
   const [page, setPage]           = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
@@ -144,7 +146,24 @@ async function handleSaveSettings() {
   function openAdd(type)        { setForm({});          setEditTarget(null);    setModal(type); }
   function openEdit(type, item) { setForm({ ...item }); setEditTarget(item.id); setModal(type); }
 
-  /* ══════════════════ FETCH DATA ON LOAD ══════════════════ */
+
+// useEffect(() => {
+//   console.log("🔥 Supabase test started");
+
+//   async function test() {
+//     try {
+//       const res = await supabase.from("users").select("*");
+
+//       console.log("🔥 FULL RESPONSE:", res);
+//     } catch (err) {
+//       console.log("🔥 CATCH ERROR:", err);
+//     }
+//   }
+
+//   test();
+// }, []);
+
+  // Fetch data on load
   useEffect(() => {
     if (!currentUser) return;
 
@@ -223,7 +242,7 @@ async function handleSaveSettings() {
     fetchAll();
   }, [currentUser]);
 
-  /* ══════════════════ PROFILE SAVE ══════════════════ */
+  // Profile Saved
   async function handleSaveProfile() {
     if (!currentUser) return;
     try {
@@ -251,7 +270,7 @@ async function handleSaveSettings() {
     setIsEditing(false);
   }
 
-  /* ══════════════════ SOFT SKILL CRUD ══════════════════ */
+  // Soft Skill Crud
   async function saveSoftSkill() {
     if (!form.name) return;
     try {
@@ -300,7 +319,7 @@ async function handleSaveSettings() {
 
   const toggleSoftSkill = id => setSoftSkills(ss => ss.map(s => s.id === id ? { ...s, active: !s.active } : s));
 
-  /* ══════════════════ HARD SKILL CRUD ══════════════════ */
+  // Hard Skill Crud
   async function saveHardSkill() {
     if (!form.name) return;
     if (hardSkills.find(h => h.name === form.name)) { setModal(null); return; }
@@ -327,7 +346,7 @@ async function handleSaveSettings() {
     }
   }
 
-  /* ══════════════════ PROJECT CRUD ══════════════════ */
+  // Project Crud
   async function saveProject() {
     if (!form.name) return;
     try {
@@ -373,7 +392,7 @@ async function handleSaveSettings() {
     }
   }
 
-  /* ══════════════════ ACHIEVEMENT CRUD ══════════════════ */
+  // Achievement Crud
   async function saveAchievement() {
     if (!form.title) return;
     try {
@@ -412,7 +431,7 @@ async function handleSaveSettings() {
     }
   }
 
-  /* ══════════════════ REDIRECT IF NOT LOGGED IN ══════════════════ */
+  // Redirect if not logged in
   if (!currentUser) {
     return (
       <div className="simple-page">
@@ -428,7 +447,7 @@ async function handleSaveSettings() {
   return (
     <div className="dashboard-root">
 
-      {/* ── HEADER ── */}
+      {/* Header */}
       <header className="dashboard-header">
         <div className="header-top-row">
           <div className="header-logo-box">
@@ -456,7 +475,7 @@ async function handleSaveSettings() {
         </div>
       </header>
 
-      {/* ══════════════════ PROFILE ══════════════════ */}
+      {/* Profile */}
       {page === "profile" && (
         <main>
 
@@ -540,7 +559,7 @@ async function handleSaveSettings() {
             </div>
           </section>
 
-          {/* ── SKILLS ── */}
+          {/* Skills */}
           <section className="section">
             <h2 className="section-title">SKILLS</h2>
 
@@ -603,7 +622,7 @@ async function handleSaveSettings() {
             </div>
           </section>
 
-          {/* ── PROJECTS ── */}
+          {/* Projects */}
           <section className="project-section">
             <div className="projects-label-row">
               <h2 className="projects-label">PROJECTS</h2>
@@ -648,7 +667,7 @@ async function handleSaveSettings() {
             )}
           </section>
 
-          {/* ── ACHIEVEMENTS ── */}
+          {/* Achievements */}
           <section className="section">
             <div className="ach-header-row">
               <h2 className="section-title">ACHIEVEMENTS</h2>
@@ -683,7 +702,7 @@ async function handleSaveSettings() {
         </main>
       )}
 
-      {/* ══════════════════ PORTFOLIOS ══════════════════ */}
+      {/* Portfolios */}
       {page === "portfolios" && (
         <main>
           {allUsers.length === 0 ? (
@@ -733,7 +752,7 @@ async function handleSaveSettings() {
         </main>
       )}
 
-      {/* ══════════════════ JOBS ══════════════════ */}
+      {/* Jobs */}
       {page === "jobs" && (
         <main className="simple-page">
           <h2><strong>Jobs</strong></h2>
@@ -741,7 +760,7 @@ async function handleSaveSettings() {
         </main>
       )}
 
-      {/* ══════════════════ ABOUT ══════════════════ */}
+      {/* About */}
       {page === "about" && (
         <main className="simple-page">
           <div className="about-banner">
@@ -754,11 +773,11 @@ async function handleSaveSettings() {
           </p>
         </main>
       )}
-      {/* ══════════════════ PORTFOLIO ══════════════════ */}
+      {/* Portfolio */}
       {page === "portfolio" && (
     <PortfolioPage userId={viewUserId} user={selectedUser} onBack={() => setPage("portfolios")}/>)}
 
-      {/* ══════════════════ SETTINGS ══════════════════ */}
+      {/* Settings */}
       {page === "settings" && (
   <main className="simple-page">
     <h2 className="simple-title">Settings</h2>
@@ -830,7 +849,7 @@ async function handleSaveSettings() {
   </main>
 )}
 
-      {/* ── FOOTER ── */}
+      {/* Footer */}
       <footer className="dashboard-footer">
         <div className="footer-left">
           <div>
@@ -857,7 +876,7 @@ async function handleSaveSettings() {
         </div>
       </footer>
 
-      {/* ══════════════════ MODALS ══════════════════ */}
+     {/* Modals */}
 
       {modal === "softSkill" && (
         <Modal title="Add Soft Skill" onClose={() => setModal(null)}>
